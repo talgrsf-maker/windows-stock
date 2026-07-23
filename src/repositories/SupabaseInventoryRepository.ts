@@ -1,0 +1,2 @@
+import type { InventoryRepository } from './InventoryRepository'; import type { InventoryEvent, Store } from '../types';
+export class SupabaseInventoryRepository implements InventoryRepository { private unavailable():never{throw new Error('חיבור Supabase עדיין לא הוגדר. יש להוסיף משתני סביבה.')} async load():Promise<Store>{return this.unavailable()} async save(_:Store):Promise<void>{return this.unavailable()} async addEvent(_:InventoryEvent):Promise<Store>{return this.unavailable()} async reset():Promise<Store>{return this.unavailable()} }
