@@ -3,7 +3,10 @@ declare const process: { env: Record<string, string | undefined> };
 export default async function handler(req: { method?: string; query?: Record<string, string>; body?: unknown }, res: { status: (n: number) => { json: (b: unknown) => void } }) {
   const endpoint = process.env.GOOGLE_APPS_SCRIPT_URL;
   const token = process.env.GOOGLE_APPS_SCRIPT_TOKEN;
+  const accessPassword = process.env.APP_ACCESS_PASSWORD;
   if (!endpoint || !token) return res.status(500).json({ ok: false, error: 'Google Sheets אינו מוגדר בשרת.' });
+  if (!accessPassword) return res.status(500).json({ ok: false, error: 'סיסמת גישה אינה מוגדרת בשרת.' });
+  if ((req as { headers?: Record<string, string | undefined> }).headers?.['x-inventory-password'] !== accessPassword) return res.status(401).json({ ok: false, error: 'סיסמת הגישה שגויה.' });
   const action = req.method === 'GET' ? req.query?.action : (req.body as { action?: string } | undefined)?.action;
   try {
     const target = action === 'load' ? `${endpoint}?action=load&token=${encodeURIComponent(token)}` : endpoint;

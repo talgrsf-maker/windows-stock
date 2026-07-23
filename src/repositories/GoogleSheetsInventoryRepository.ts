@@ -4,8 +4,9 @@ import type { InventoryEvent, Store } from '../types';
 export class GoogleSheetsInventoryRepository implements InventoryRepository {
   private async request<T>(action: string, payload?: unknown): Promise<T> {
     const url = action === 'load' ? '/api/google-sheets?action=load' : '/api/google-sheets';
-    const response = await fetch(url, action === 'load' ? undefined : {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+    const password = sessionStorage.getItem('windows-stock-access-password') ?? '';
+    const response = await fetch(url, action === 'load' ? { headers: { 'x-inventory-password': password } } : {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-inventory-password': password },
       body: JSON.stringify({ action, payload }),
     });
     if (!response.ok) throw new Error('לא ניתן להתחבר לשרת Google Sheets.');
